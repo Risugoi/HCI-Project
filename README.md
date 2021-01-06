@@ -5,4 +5,4 @@ to run:
 
 run main under lib folder
 
-*make sure android emulator is running
+*make sure an android emulator is installed
