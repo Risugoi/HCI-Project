@@ -25,128 +25,127 @@ class _home extends State<home> {
   String _year = "";
   int _requests;
   List _feedInfo = [];
-  _home() {
-    _getUsername().then((content) => setState(() {
-          _username = content;
-        }));
-    _getName().then((content) => setState(() {
-          _name = content;
-        }));
 
-    _getSchool().then((content) => setState(() {
-          _school = content;
-        }));
-    _getYear().then((content) => setState(() {
-          _year = content;
-        }));
-
-    _getNumCols().then((content) => setState(() {
-          _requests = content;
-        }));
-    _getInfo().then((content) => setState(() {
-          _feedInfo = content;
-        }));
+  @override
+  void initState() {
+    super.initState();
+    info();
   }
 
   @override
   Widget build(BuildContext context) {
+    _requests = _feedInfo.length;
     print(_feedInfo);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: new Scaffold(
-            appBar: AppBar(
-              iconTheme: IconThemeData(color: Colors.black),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    child: Container(
-                      height: double.infinity,
-                      child: SingleChildScrollView(
-                        child: Column(children: <Widget>[
-                          Container(
-                            child: Image.asset('assets/images/icon.png'),
-                            height: 70,
-                            width: 70,
-                          ),
-                          SizedBox(height: 15),
-                          Container(
-                            child: Text('$_username'),
-                          )
-                        ]),
-                      ),
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.black),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Container(
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      child: Column(children: <Widget>[
+                        Container(
+                          child: Image.asset('assets/images/icon.png'),
+                          height: 70,
+                          width: 70,
+                        ),
+                        SizedBox(height: 15),
+                        Container(
+                          child: Text('$_username'),
+                        )
+                      ]),
                     ),
                   ),
-                  ListTile(
-                    title: Text('Profile'),
-                  ),
-                  ListTile(
-                    title: Text('Donation Request'),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => donation(
-                                  username: _username,
-                                  name: _name,
-                                  school: _school,
-                                  year: _year)));
-                    },
-                  ),
-                  ListTile(
-                    title: Text('My Donation'),
-                  ),
-                  ListTile(
-                    title: Text('Chat'),
-                  ),
-                  ListTile(
-                    title: Text('Settings'),
-                  ),
-                  ListTile(
-                    title: Text('Signout'),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => login()));
-                    },
-                  )
-                ],
-              ),
+                ),
+                ListTile(
+                  title: Text('Profile'),
+                ),
+                ListTile(
+                  title: Text('Donation Request'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => donation(
+                                username: _username,
+                                name: _name,
+                                school: _school,
+                                year: _year)));
+                  },
+                ),
+                ListTile(
+                  title: Text('My Donation'),
+                ),
+                ListTile(
+                  title: Text('Chat'),
+                ),
+                ListTile(
+                  title: Text('Settings'),
+                ),
+                ListTile(
+                  title: Text('Signout'),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => login()));
+                  },
+                )
+              ],
             ),
-            body: new ListView(
-              padding: const EdgeInsets.all(10),
-              children: new List.generate(
-                  _requests,
-                  (index) => ListTile(
-                        leading: Image.asset('assets/images/icon.png'),
-                        title: Text(_feedInfo[index].values.elementAt(0)),
-                        subtitle: Text(_feedInfo[index].values.elementAt(1)),
-                        trailing: FittedBox(
-                          child: Column(
-                            children: <Widget>[
-                              Text(_feedInfo[index].values.elementAt(2)),
-                              Text(((int.parse(_feedInfo[index]
-                                              .values
-                                              .elementAt(3)) /
-                                          int.parse(_feedInfo[index]
-                                              .values
-                                              .elementAt(4))) *
-                                      100)
-                                  .toString())
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => donationRequestInfo()));
-                        },
-                      )),
-            )));
+          ),
+          body: new ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemCount: _requests,
+            itemBuilder: (context, index) {
+              return ListTile(
+                contentPadding:
+                    EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 10),
+                leading: Image.asset('assets/images/icon.png'),
+                title: Text(_feedInfo[index].values.elementAt(0)),
+                subtitle: Text(_feedInfo[index].values.elementAt(1)),
+                trailing: FittedBox(
+                  child: Column(
+                    children: <Widget>[
+                      Text(_feedInfo[index].values.elementAt(2)),
+                      Text(((int.parse(_feedInfo[index].values.elementAt(3)) /
+                                  int.parse(
+                                      _feedInfo[index].values.elementAt(4))) *
+                              100)
+                          .toString())
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ));
+  }
+
+  void info() async {
+    try {
+      String un = await _getUsername();
+      String n = await _getName();
+      String s = await _getSchool();
+      String y = await _getYear();
+      List d = await _getInfo();
+      setState(() {
+        _username = un;
+        _name = n;
+        _school = s;
+        _year = y;
+        _feedInfo = d;
+      });
+    } catch (e) {
+      print('error');
+    }
   }
 
   //get personal info from table
@@ -183,15 +182,6 @@ class _home extends State<home> {
   }
 
   //get feed info from table
-  _getNumCols() async {
-    String path = p.join(await getDatabasesPath(), feeddb.dbName);
-    var db = await openDatabase(path);
-    List<Map> rows =
-        await db.rawQuery("SELECT COUNT (*) FROM ${feeddb.table1}");
-    int users = rows[0].values.elementAt(0);
-    return users;
-  }
-
   _getInfo() async {
     String path = p.join(await getDatabasesPath(), feeddb.dbName);
     var db = await openDatabase(path);
